@@ -134,7 +134,7 @@ a.use(express.static(path.join(__dirname, 'public')));
 
 
 // Calling the Routing page  
-a.use(adminRoutes);
+a.use('/admin',adminRoutes);
 a.use(shopRoutes);
 
 

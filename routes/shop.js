@@ -43,15 +43,30 @@ const router = express.Router();
 
 
 //Import Product Controller
-const productController = require('../controllers/products');
+const shopController = require('../controllers/shop');
 
 
 
 
 // Set the page to Route
-router.get('/', productController.getProducts);
+router.get('/', shopController.getIndex);
 
 
+router.get('/products', shopController.getProducts);
+
+// For delete product
+// router.get('/products/delete');
+
+// to pass id in product EX: products/6532
+router.get('/products/:productId', shopController.getProduct);
+
+router.get('/cart', shopController.getCart);
+
+router.post('/cart', shopController.postCart);
+
+router.get('/orders', shopController.getOrders);
+
+router.get('/checkout', shopController.getCheckout);
 
 
 // Create a module to use Route method
