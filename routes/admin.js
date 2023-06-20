@@ -33,7 +33,7 @@ const router = express.Router();
 // const rootDir = require('../util/path')
 
 //Import Product Controller
-const productController = require('../controllers/products');
+const adminController = require('../controllers/admin');
 
 // Array To Store Product
 const products = [];
@@ -43,10 +43,24 @@ const products = [];
 
 
 // Set the page to Route
-router.get('/addProduct', productController.getAddProduct);
+
+// /admin/addProduct => GET
+router.get('/addProduct', adminController.getAddProduct);
+
+// /admin/products => GET
+router.get('/products', adminController.getProducts);
+
+
+router.get('/editProduct/:productId', adminController.getEditProduct);
+
 
 // a.post = Only Post request & a.get = only Get request.
-router.post('/addProduct', productController.postAddProduct);
+
+// /admin/addProduct => GET
+router.post('/addProduct', adminController.postAddProduct);
+
+router.post('/editProduct', adminController.postEditProduct);
+
 
 
 
