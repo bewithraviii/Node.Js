@@ -124,3 +124,8 @@ main{
     justify-content: space-evenly;
     align-items: center;
 }
+
+
+.btn{
+    border: 1px solid #6200ff !important;
+}

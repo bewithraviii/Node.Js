@@ -61,7 +61,7 @@ router.post('/addProduct', adminController.postAddProduct);
 
 router.post('/editProduct', adminController.postEditProduct);
 
-
+router.post('/deleteProduct', adminController.postDeleteProduct);
 
 
 // Create a module to use Route method

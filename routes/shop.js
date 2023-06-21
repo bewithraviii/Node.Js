@@ -64,9 +64,12 @@ router.get('/cart', shopController.getCart);
 
 router.post('/cart', shopController.postCart);
 
+router.post('/cartDeleteItem', shopController.postcartDeleteItem);
+
 router.get('/orders', shopController.getOrders);
 
 router.get('/checkout', shopController.getCheckout);
+
 
 
 // Create a module to use Route method

@@ -9,7 +9,26 @@
 <%- include('../includes/navigation.ejs') %>
 
 
+<main style="border: 2px Solid grey; margin: 3rem; background-color: darkgrey;">
+    <% if(products.length > 0) { %>
+        <h3 style="margin: 0; padding: 1rem; padding-left: 2rem; color: #6200ff;"> Cart Item: <%= products.length %></h3>
+        <ul style="list-style: none; padding: 0; margin: 0; padding: 1rem;">
+            <% products.forEach(p => { %>
+                <li style="background-color: azure; border-radius: 10px; padding: 1rem; margin: 1rem;">
+                    <p> Name: <%= p.productData.title %></p>
+                    <p> Qty: <%=  p.qty %></p>
+                    <form action="/cartDeleteItem" method="POST">
+                        <input type="hidden" name="productId" value="<%= p.productData.id %>">
+                        <button class="btn" type="submit">DELETE </button>
+                    </form>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <h1>No Product In Cart</h1>
+    <% } %>    
 
+</main>
 
 
 

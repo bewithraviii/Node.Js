@@ -90,10 +90,7 @@ const bodyparser = require('body-parser');
 // Import Path module to send HTML
 const path = require('path');
 
-// Accessing Module For Routing the pages with particular path
-// const adminData = require('./routes/admin');
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
+
 
 // For Express Handlebars html
 // const expressHbs = require('express-handlebars');
@@ -102,6 +99,12 @@ const shopRoutes = require('./routes/shop');
 // Import Controller Error
 const errorController = require('./controllers/error');
 
+// Database Connection
+// const db = require('./util/database');
+
+
+//Database Connection For Sequelize
+const sequelize = require('./util/database');
 
 
 // Creating Instance to call Expres Js.
@@ -121,6 +124,10 @@ a.set('view engine', 'ejs');
 a.set('views', 'views')                                             
 
 
+// Accessing Module For Routing the pages with particular path
+// const adminData = require('./routes/admin');
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 
 
 
@@ -142,5 +149,13 @@ a.use(shopRoutes);
 a.use(errorController.getError404);
 
 
+sequelize
+  .sync()
+  .then(result => { 
+    // console.log(result); 
+    a.listen(8000); 
+    })
+  .catch(err => { console.log(err) });
+
 // Assiging Port to run on Localhost
-a.listen(8000);                     
+// a.listen(8000);                     
