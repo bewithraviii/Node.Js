@@ -107,6 +107,17 @@ const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
 
 
+// Including Models 
+const Product = require('./models/product');
+const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-item');
+
+
+
+
 // Creating Instance to call Expres Js.
 const a = express();
 
@@ -138,6 +149,15 @@ a.use(bodyparser.urlencoded({extended: false}));
 a.use(express.static(path.join(__dirname, 'public')));
 
 
+// Creating Dummy User Middleware
+a.use((req, res, next) => {
+  User.findByPk(1)
+  .then(user => {
+    req.user = user;
+    next();
+  })
+  .catch(err => { console.log(err) });
+});
 
 
 // Calling the Routing page  
@@ -149,12 +169,41 @@ a.use(shopRoutes);
 a.use(errorController.getError404);
 
 
+// Association: Relationship between different tables
+Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem });
+
+
+
+
+
+
 sequelize
+  // .sync({ force: true })
   .sync()
   .then(result => { 
-    // console.log(result); 
-    a.listen(8000); 
+    return User.findByPk(1);
+    // console.log(result);
     })
+  .then(user => {
+    if(!user){
+      return User.create({ name: 'Ravi', email: 'prirav@gmail.com'});
+    }
+    return  user;
+  })
+  .then(user => {
+    return user.createCart();
+  })
+  .then(cart => {
+    a.listen(8000);
+  })
   .catch(err => { console.log(err) });
 
 // Assiging Port to run on Localhost
