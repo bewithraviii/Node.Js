@@ -2,7 +2,12 @@
 
 // To create instance of Express Js.
 const express = require('express');
-const bodyparser = require('body-parser');                  
+const bodyparser = require('body-parser');   
+
+
+// Import Mongoose to connect to DB
+const mongoose = require('mongoose');
+
 
 // Import Path module to send HTML
 const path = require('path');
@@ -12,7 +17,7 @@ const path = require('path');
 const errorController = require('./controllers/error');
 
 // Import MongoDB Database
-const mongoConnect = require('./util/database').mongoConnect;
+// const mongoConnect = require('./util/database').mongoConnect;
 
 
 // Import User Modal
@@ -32,6 +37,7 @@ a.set('views', 'views')
 // const adminData = require('./routes/admin');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 
 
 
@@ -44,9 +50,9 @@ a.use(express.static(path.join(__dirname, 'public')));
 
 // Creating Dummy User Middleware
 a.use((req, res, next) => {
-  User.findById("64980466c547495effb3b06b")
+  User.findById('649938a25cc6b8f0b78d047b')
   .then(user => {
-    req.user = new User(user.name, user.email, user.cart, user._id);
+    req.user = user;
     next();
   })
   .catch(err => { console.log(err) });
@@ -56,18 +62,36 @@ a.use((req, res, next) => {
 // Calling the Routing page  
 a.use('/admin',adminRoutes);
 a.use(shopRoutes);
+a.use(authRoutes);
 
 
 // This will show error page 
 a.use(errorController.getError404);
 
 
-mongoConnect(() => {
+// This is MongoDb connect
+// mongoConnect(() => {
+//   a.listen(8000);
+// });
+
+
+// This is mongoose connect
+mongoose.connect('mongodb+srv://ravipateljigneshpatel137:Ravi3601@nodeshop.azir75m.mongodb.net/Shop')
+.then(result => {
+  User.findOne().then(user => {
+    if(!user)
+    {
+      const user = new User({
+        name: 'Ravi',
+        email: 'ravi@test.com',
+        cart: { items: [] }
+      });
+      user.save();
+    }
+  })
   a.listen(8000);
-});
-
-
-
+})
+.catch(err => { console.log(err) });
 
 
 

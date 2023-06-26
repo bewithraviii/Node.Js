@@ -14,19 +14,19 @@
         <ul style="list-style: none; padding: 0; margin: 0; padding: 1rem;">
             <% orders.forEach(order => { %>
             <li style="background-color: lightskyblue; border-radius: 10px; padding: 1rem; margin: 1rem;">
-                <h2 style="margin: 0; padding: 1rem; padding-left: 2rem;">Order Id: <%= order._id %></h2>
+                <h3 style="margin: 0; padding: 1rem; padding-left: 2rem;">ORDER-ID: #<%= order._id %></h3>
                 <ul style="list-style: none; padding: 0; margin: 0; padding: 1rem;">
-                    <% order.items.forEach(product => { %>
+                    <% order.products.forEach(p => { %>
                     <li style="background-color: honeydew; border-radius: 10px; padding: 2rem; margin: 1rem;">
                         <div class="row">
                             <div class="col-4" style="justify-content: center; display: flex;">
-                                <img src="<%= product.imageUrl %>" style="width: 10rem; aspect-ratio: 1;">
+                                <img src="<%= p.product.imageUrl %>" style="width: 10rem; aspect-ratio: 1;">
                             </div>
                             <div class="col-8">
-                                <p><b style="font-size: 18px;">Name : </b>  <%= product.title %></p>
-                                <p><b style="font-size: 18px;">Quantity : </b>  <%= product.quantity %></p>
-                                <p><b style="font-size: 18px;">Description : </b>  <%= product.description %></p>
-                                <p><b style="font-size: 18px;">Price : </b>  <%= product.price %></p>
+                                <p><b style="font-size: 18px;">Name : </b>  <%= p.product.title %></p>
+                                <p><b style="font-size: 18px;">Quantity : </b>  <%= p.quantity %></p>
+                                <p><b style="font-size: 18px;">Description : </b>  <%= p.product.description %></p>
+                                <p><b style="font-size: 18px;">Price : </b>  <%= p.product.price %> Rs</p>
                             </div>
                         </div>
                     </li>

@@ -1,18 +1,14 @@
 
-// const products = [];
+
 const Product = require('../models/product');
+const Order = require('../models/order');
 
-
-// const { where } = require('sequelize');
 
 
 
 
 exports.getProducts = (req, res, next) => {
-
-    //Showing the Value Stored in Product Array
-    // const products = adminData.products;
-    Product.fetchAll()
+    Product.find()
     .then(products => {
         res.render('shop/product-list', {
             prods: products, 
@@ -22,12 +18,6 @@ exports.getProducts = (req, res, next) => {
     })
     .catch(err => console.log(err));
     
-
-    // sendFile is used to show file
-    // Here rootDir is used to show path
-    // res.sendFile(path.join(rootDir, 'views', 'shop.html'));                 //This is normal HTML
-
-    // This is to return view in PUG
 };
 
 
@@ -47,7 +37,7 @@ exports.getProduct = (req, res, next) => {
 
 
 exports.getIndex = (req, res, next) => {
-    Product.fetchAll()
+    Product.find()
     .then(products => {
         res.render('shop/index', {
             prods: products, 
@@ -61,8 +51,11 @@ exports.getIndex = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
     req.user
-    .getCart()
-    .then(products => {
+    .populate('cart.items.productId')
+    // .execPopulate()
+    .then(user => {
+        console.log(user.cart.items);
+        const products = user.cart.items;
         res.render('shop/cart', {
             path: '/cart',
             pageTitle: 'Your Cart',
@@ -91,7 +84,7 @@ exports.postCart = async (req, res, next) => {
 
 exports.postcartDeleteItem = async (req, res, next) => {
     const prodId = await req.body.productId;
-    req.user.deleteItemFromCart(prodId)
+    req.user.removeFromCart(prodId)
     .then(result => {
         res.redirect('/cart');
     })
@@ -100,9 +93,26 @@ exports.postcartDeleteItem = async (req, res, next) => {
 
 
 exports.postOrder = (req, res, next) => {
-    req.user.addOrder()
+    req.user
+    .populate('cart.items.productId')
+    .then(user => {
+        const products = user.cart.items.map(i => {
+            return { quantity: i.quantity, product: { ...i.productId._doc } };
+        });
+        const order = new Order({
+            user: {
+                name: req.user.name,
+                userId: req.user
+            },
+            products: products
+        });
+        return order.save();
+    })
     .then(result => {
-        res.redirect('/orders')
+        return req.user.clearCart();
+    })
+    .then(() => {
+        res.redirect('/orders');
     })
     .catch(err => { console.log(err) });
 };
@@ -111,8 +121,7 @@ exports.postOrder = (req, res, next) => {
 
 
 exports.getOrders = (req, res, next) => {
-    req.user
-    .getOrders()
+    Order.find({"user.userId": req.user._id})
     .then(orders => {
         res.render('shop/orders', {
             path: '/orders',
