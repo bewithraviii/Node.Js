@@ -1,0 +1,36 @@
+
+<%- include('../includes/head.ejs') %>
+
+
+
+<body>
+    
+
+<%- include('../includes/navigation.ejs') %>
+
+<main class="centerd">
+    <div class="grid">
+        <div class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title"><%= product.title %></h1>
+            </header>
+            <hr>
+            <div class="card__image">
+                <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">Rs <%= product.price %></h2>
+                <p class="product__description"><%= product.description %></p>
+            </div>
+            <div class="card__actions">
+                <%- include('../includes/add-to-cart.ejs') %>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+
+
+<%- include('../includes/end.ejs') %>
