@@ -8,6 +8,16 @@ const bodyparser = require('body-parser');
 // Import Mongoose to connect to DB
 const mongoose = require('mongoose');
 
+// Session
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+
+// csrf token
+const csrf = require('csurf');
+
+// Flash for showing error message
+const flash = require('connect-flash'); 
+
 
 // Import Path module to send HTML
 const path = require('path');
@@ -24,8 +34,21 @@ const errorController = require('./controllers/error');
 const  User = require('./models/user');
 
 
+const MONGODB_URI = 'mongodb+srv://ravipateljigneshpatel137:Ravi3601@nodeshop.azir75m.mongodb.net/Shop';
+
 // Creating Instance to call Expres Js.
 const a = express();
+
+
+// initialize MongoDB Session
+const store = new MongoDBStore({
+  uri: MONGODB_URI, 
+  collection: 'sessions'
+});
+
+
+const csrfProtection = csrf();
+
 
 // It will set the engine to view pug style html code
 a.set('view engine', 'ejs');
@@ -47,15 +70,34 @@ a.use(bodyparser.urlencoded({extended: false}));
 // For Implement Static File (CSS)
 a.use(express.static(path.join(__dirname, 'public')));
 
+// register session middleware
+a.use(session({
+  secret: 'my secret', 
+  resave: false, 
+  saveUninitialized: false,
+  store: store
+}));
+
+a.use(csrfProtection);
+a.use(flash());
 
 // Creating Dummy User Middleware
 a.use((req, res, next) => {
-  User.findById('649938a25cc6b8f0b78d047b')
+  if(!req.session.user){
+    return next();
+  }
+  User.findById(req.session.user._id)
   .then(user => {
     req.user = user;
     next();
   })
   .catch(err => { console.log(err) });
+});
+
+a.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
 });
 
 
@@ -69,27 +111,13 @@ a.use(authRoutes);
 a.use(errorController.getError404);
 
 
-// This is MongoDb connect
-// mongoConnect(() => {
-//   a.listen(8000);
-// });
 
 
 // This is mongoose connect
-mongoose.connect('mongodb+srv://ravipateljigneshpatel137:Ravi3601@nodeshop.azir75m.mongodb.net/Shop')
+mongoose.connect(MONGODB_URI)
 .then(result => {
-  User.findOne().then(user => {
-    if(!user)
-    {
-      const user = new User({
-        name: 'Ravi',
-        email: 'ravi@test.com',
-        cart: { items: [] }
-      });
-      user.save();
-    }
-  })
   a.listen(8000);
+  console.log("Connected");
 })
 .catch(err => { console.log(err) });
 

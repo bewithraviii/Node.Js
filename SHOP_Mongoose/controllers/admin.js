@@ -5,10 +5,14 @@ const Product = require('../models/product');
 
 
 exports.getAddProduct = (req, res, next) => {
+    // if (!req.session.isLoggedIn){
+    //     return res.redirect('/login');
+    // }
     res.render('admin/editProduct', {
     pageTitle: 'Add Product', 
     path: '/admin/addProduct', 
     editing: false
+
     });
 };
 

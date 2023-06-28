@@ -29,6 +29,7 @@
                 <a href="/admin/editProduct/<%= product._id %>?edit=true" class="btn" style="width: 5rem;">Edit</a>
                 <form action="/admin/deleteProduct" method="POST">
                     <input type="hidden" value="<%= product._id %>" name="productId">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">                   
                     <button class="btn" type="submit" style="width: 5rem;">Delete</button>
                 </form>
             </div>

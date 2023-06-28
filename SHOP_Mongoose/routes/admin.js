@@ -15,9 +15,9 @@ const router = express.Router();
 //Import Product Controller
 const adminController = require('../controllers/admin');
 
-// Array To Store Product
-const products = [];
 
+
+const isAuth = require('../middleware/is-auth');
 
 
 
@@ -25,22 +25,22 @@ const products = [];
 // Set the page to Route
 
 // /admin/addProduct => GET
-router.get('/addProduct', adminController.getAddProduct);
+router.get('/addProduct', isAuth, adminController.getAddProduct);
 
 // /admin/products => GET
-router.get('/products', adminController.getProducts);
+router.get('/products', isAuth, adminController.getProducts);
 
 
-router.get('/editProduct/:productId', adminController.getEditProduct);
+router.get('/editProduct/:productId', isAuth, adminController.getEditProduct);
 
 // a.post = Only Post request & a.get = only Get request.
 
 // /admin/addProduct => GET
-router.post('/addProduct', adminController.postAddProduct);
+router.post('/addProduct', isAuth, adminController.postAddProduct);
 
-router.post('/editProduct', adminController.postEditProduct);
+router.post('/editProduct', isAuth, adminController.postEditProduct);
 
-router.post('/deleteProduct', adminController.postDeleteProduct);
+router.post('/deleteProduct', isAuth, adminController.postDeleteProduct);
 
 
 
