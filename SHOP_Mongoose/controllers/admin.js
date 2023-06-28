@@ -68,15 +68,17 @@ exports.postEditProduct = (req, res, next) => {
     const updatedDescription = req.body.description;
     const updatedPrice = req.body.price;
     Product.findById(prodId).then(product => {
+        if (product.userId.toString() !== req.user._id.toString()){
+            return res.redirect('/');
+        }
         product.title = updatedTitle;
         product.price = updatedPrice; 
         product.description = updatedDescription; 
         product.imageUrl = updatedImageUrl;
-        return product.save()
-    })
-    .then(result => { 
-        console.log("Updated Product"); 
-        res.redirect('/admin/products'); 
+        return product.save().then(result => { 
+            console.log("Updated Product"); 
+            res.redirect('/admin/products'); 
+        })
     })
     .catch(err => { console.log(err) });
 };
@@ -84,7 +86,7 @@ exports.postEditProduct = (req, res, next) => {
 
 
 exports.getProducts = (req, res, next) => {
-    Product.find()
+    Product.find({ userId: req.user._id })
     //.select('title price')
     //.populate('userId', 'name')
     .then(Product => {
@@ -108,7 +110,7 @@ Recommend:- If don't want to get the deleted document then have to use findByIdA
 */
 exports.postDeleteProduct = (req, res, next) => {
    const prodId = req.body.productId;
-    Product.findByIdAndRemove(prodId)
+    Product.deleteOne({ _id: prodId, userId: req.user._id })
     .then(() => {
     res.redirect('/admin/products')
     })
