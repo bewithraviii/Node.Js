@@ -19,6 +19,10 @@ const csrf = require('csurf');
 const flash = require('connect-flash'); 
 
 
+// Import MULTER for Handeling File Upload
+const multer = require('multer');
+
+
 // Import Path module to send HTML
 const path = require('path');
 
@@ -50,6 +54,7 @@ const store = new MongoDBStore({
 const csrfProtection = csrf();
 
 
+
 // It will set the engine to view pug style html code
 a.set('view engine', 'ejs');
 // Here we define that where these templates are located to convert it into pug
@@ -63,12 +68,22 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
 
-
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images')
+  },
+  filename: (res, file, cb) => {
+    cb(null, file.originalname);
+  }
+});
 
 a.use(bodyparser.urlencoded({extended: false})); 
+a.use(multer({storage: fileStorage }).single('image')); 
 
 // For Implement Static File (CSS)
 a.use(express.static(path.join(__dirname, 'public')));
+a.use('/images',express.static(path.join(__dirname, 'images')));
+
 
 // register session middleware
 a.use(session({
@@ -81,18 +96,6 @@ a.use(session({
 a.use(csrfProtection);
 a.use(flash());
 
-// Creating Dummy User Middleware
-a.use((req, res, next) => {
-  if(!req.session.user){
-    return next();
-  }
-  User.findById(req.session.user._id)
-  .then(user => {
-    req.user = user;
-    next();
-  })
-  .catch(err => { console.log(err) });
-});
 
 a.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
@@ -101,16 +104,46 @@ a.use((req, res, next) => {
 });
 
 
+
+// Creating Dummy User Middleware
+a.use((req, res, next) => {
+  if(!req.session.user){
+    return next();
+  }
+  User.findById(req.session.user._id)
+  .then(user => {
+    if (!user)
+    {
+      return next();
+    }
+    req.user = user;
+    next();
+  })
+  .catch(err => { 
+    next(new Error(err));
+  });
+});
+
+
+
 // Calling the Routing page  
 a.use('/admin',adminRoutes);
 a.use(shopRoutes);
 a.use(authRoutes);
 
 
+a.get('/Error500', errorController.getError500);
+
 // This will show error page 
 a.use(errorController.getError404);
 
-
+a.use((error, req, res, next) => {
+  res.status(500).render('Error500', {
+    pageTitle: 'Error-500',
+    path: '/Error500',
+    isAuthenticated: req.session.isLoggedIn
+  });
+})
 
 
 // This is mongoose connect
@@ -122,5 +155,26 @@ mongoose.connect(MONGODB_URI)
 .catch(err => { console.log(err) });
 
 
+//Errors and http Response Codes
+/*
 
-            
+ 2xx (Success)
+  200 = Operation Successed
+  201 = Success, resource created 
+
+
+ 3xx (Redirect)
+  301 = Moved Permanently
+
+
+ 4xx (Client-side error)
+  401 = Not Authenticated
+  403 = Not Authorised
+  404 = Not Found
+  422 = Invalid input
+
+
+ 5xx (Server-side error)
+  500 = Server-Side error
+
+*/

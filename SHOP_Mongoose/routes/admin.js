@@ -3,6 +3,9 @@
 // To create instance of Express Js.
 const express = require('express');
 
+
+const { body } = require('express-validator');
+
 // Import Path module to send HTML
 const path = require('path');
 
@@ -36,9 +39,34 @@ router.get('/editProduct/:productId', isAuth, adminController.getEditProduct);
 // a.post = Only Post request & a.get = only Get request.
 
 // /admin/addProduct => GET
-router.post('/addProduct', isAuth, adminController.postAddProduct);
+router.post('/addProduct', 
+[
+   body('title')
+   .isAlphanumeric()
+   .isLength({ min: 3 })
+   .trim(),
+   body('price')
+   .isFloat(),
+   body('description')
+   .isLength({ min: 5, max: 400 })
+   .trim() 
+]
+,isAuth, adminController.postAddProduct);
 
-router.post('/editProduct', isAuth, adminController.postEditProduct);
+router.post('/editProduct', 
+[
+    body('title')
+    .isString()
+    .isLength({ min: 3 })
+    .trim(),
+    body('price')
+    .isFloat(),
+    body('description')
+    .isString()
+    .isLength({ min: 5, max: 400 })
+    .trim() 
+ ]
+, isAuth, adminController.postEditProduct);
 
 router.post('/deleteProduct', isAuth, adminController.postDeleteProduct);
 

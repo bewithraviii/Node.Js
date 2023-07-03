@@ -19,7 +19,7 @@
                 <h1 class="product__title"><%= product.title %></h1>
             </header>
             <div class="card__image">
-                <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
+                <img src="/<%= product.imageUrl %>" alt="<%= product.title %>">
             </div>
             <div class="card__content">
                 <h2 class="product__price">Rs <%= product.price %></h2>
@@ -29,7 +29,7 @@
                 <a href="/admin/editProduct/<%= product._id %>?edit=true" class="btn" style="width: 5rem;">Edit</a>
                 <form action="/admin/deleteProduct" method="POST">
                     <input type="hidden" value="<%= product._id %>" name="productId">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">                   
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">                 
                     <button class="btn" type="submit" style="width: 5rem;">Delete</button>
                 </form>
             </div>

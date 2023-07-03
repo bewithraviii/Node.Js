@@ -27,26 +27,56 @@
     <%- include('../includes/navigation.ejs') %>
 
 <main>
-    <form class="product-form" action="/admin/<% if (editing) { %>editProduct<% } else { %>addProduct<% } %>" method="POST">
+    <% if (errorMessage) { %>
+        <div class="user-message user-message--error"><%= errorMessage %></div>
+    <% } %>
+    <form class="product-form" action="/admin/<% if (editing) { %>editProduct<% } else { %>addProduct<% } %>" method="POST" enctype="multipart/form-data">
         
         <div class="form-control">
             <label for="title">Title</label>
-            <input type="text" name="title" id="title" value="<% if (editing) { %><%= product.title %><% } %>">
+            <input 
+            class="<%= validationErrors.find(e => e.path == 'title') ? 'invalid' : '' %>"
+            type="text" 
+            name="title" 
+            id="title" 
+            value="<% if (editing || hasError) { %><%= product.title %><% } %>">
         </div>
 
-        <div class="form-control">
+        <!-- <div class="form-control">
             <label for="imageUrl">Image URL</label>
-            <input type="text" name="imageUrl" id="imageUrl" value="<% if (editing) { %><%= product.imageUrl %><% } %>">
+            <input 
+            class="<%= validationErrors.find(e => e.path == 'imageUrl') ? 'invalid' : '' %>"
+            type="text" 
+            name="imageUrl" 
+            id="imageUrl" 
+            value="<% if (editing || hasError) { %><%= product.imageUrl %><% } %>">
+        </div> -->
+
+        <div class="form-control">
+            <label for="image">Image</label>
+            <input 
+            type="file" 
+            name="image" 
+            id="image">
         </div>
 
         <div class="form-control">
             <label for="price">Price</label>
-            <input type="number" name="price" id="price" value="<% if (editing) { %><%= product.price %><% } %>">
+            <input 
+            class="<%= validationErrors.find(e => e.path == 'price') ? 'invalid' : '' %>"
+            type="number" 
+            name="price" 
+            id="price" 
+            value="<% if (editing || hasError) { %><%= product.price %><% } %>">
         </div>
 
         <div class="form-control">
             <label for="description">Description</label>
-            <textarea name="description" id="description" rows="3"><% if (editing) { %><%= product.description %><% } %></textarea>
+            <textarea 
+            class="<%= validationErrors.find(e => e.path == 'description') ? 'invalid' : '' %>"
+            name="description" 
+            id="description" 
+            rows="3"><% if (editing || hasError) { %><%= product.description %><% } %></textarea>
         </div>
 
         <% if (editing) { %>
@@ -63,3 +93,12 @@
 <%- include('../includes/end.ejs') %>
 <!-- </body>
 </html> -->
+
+<style>
+    .invalid{
+        border-color: red !important;
+    }
+    textarea.invalid{
+        border-color: red !important;
+    }
+</style>
