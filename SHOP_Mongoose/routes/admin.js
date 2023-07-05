@@ -68,7 +68,10 @@ router.post('/editProduct',
  ]
 , isAuth, adminController.postEditProduct);
 
-router.post('/deleteProduct', isAuth, adminController.postDeleteProduct);
+// router.post('/deleteProduct', isAuth, adminController.postDeleteProduct);
+
+
+router.delete('/product/:productId', isAuth, adminController.deleteProduct);
 
 
 

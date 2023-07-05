@@ -157,11 +157,37 @@ main{
     border-radius: 3px;
     background: #b9c9ff;
     text-align: center;
-  }
+}
   
-  .user-message--error {
-    border-color: red;
-    background: rgb(255, 176, 176);
-    color: red;
-  }
+.user-message--error {
+border-color: red;
+background: rgb(255, 176, 176);
+color: red;
+}
 
+.pagination{
+    margin-top: 2rem;
+    text-align: center;
+    justify-content: center;
+}
+
+
+.pagination a{
+    text-decoration: none !important;
+    color: #6200ff;
+    padding: 0.5rem;
+    border: 1px solid #6200ff;
+    margin: 0 1rem;
+}
+
+
+
+.pagination a:hover,
+.pagination a:active,
+.pagination a.active,
+.pagination button:hover,
+.pagination button:active
+{
+    background-color: #6200ff !important;
+    color: white !important;
+}

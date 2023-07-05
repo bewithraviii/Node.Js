@@ -1,0 +1,44 @@
+
+<%- include('../includes/head.ejs') %>
+
+
+
+<body>
+    
+
+<%- include('../includes/navigation.ejs') %>
+
+
+<main style="border: 2px Solid grey; margin: 3rem; background-color: darkgrey;">
+    <ul style="list-style: none; padding: 0; margin: 0; padding: 1rem;">
+        <% products.forEach(p => { %>
+            <li style="background-color: azure; border-radius: 10px; padding: 1rem; margin: 1rem;">
+                <p> Name: <%= p.productId.title %></p>
+                <p> Qty: <%=  p.quantity %></p>
+                <p> Price: <%=  p.productId.price %></p>
+            </li>
+        <% }) %>
+        <div>
+            <h3>Payable Amount: <%= totalSum %> Rs</h3>
+        </div>
+        <div class="mt-3 centered">
+            <button class="btn" id="order-btn">ORDER</button>
+            <script src="https://js.stripe.com/v3/"></script>
+            <script>
+                var stripe = Stripe('pk_test_51NQ68MSAEl7LbVjpVkVdeeJvMEQzbQfvNOPIUdFdYl4oHHtgmRXNrsWvp0RSCmHMoV8ZNHaU9hCb6czuU3OPayl000EnO3pIML');
+                var orderBtn = document.getElementById('order-btn');
+                orderBtn.addEventListener('click', function() {
+                    stripe.redirectToCheckout({
+                        sessionId: '<%= sessionId %>'
+                    });
+                });
+            </script>
+        </div>
+    </ul>
+    
+</main>
+
+
+
+
+<%- include('../includes/end.ejs') %>
