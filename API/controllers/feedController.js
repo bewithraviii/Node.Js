@@ -37,7 +37,7 @@ exports.getPosts = async (req, res, next) => {
 };
 
 
-exports.createPost = (req, res, next) => {
+exports.createPost = async (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty())
     {   
@@ -62,33 +62,51 @@ exports.createPost = (req, res, next) => {
         imageUrl: image,
         creator: req.userId
     });
-    post.save()
-    .then(result => {
-        return User.findById(req.userId);
-    })
-    .then(user => {
-        creator = user;
+    try{
+        await post.save();
+        const user = await User.findById(req.userId);
         user.posts.push(post);
-        return user.save();
-    })
-    .then(result => {
-        console.log(result);
-        io.getIO().emit('posts', { 
-            action: 'create', 
-            post: { ...post._doc, creator: { _id: req.userId, name: user.name } } 
-        });
+        const savedUser = await user.save();
         res.status(201).json({
             message: 'Post Created Successfully',
             post: post,
-            creator: { _id: creator._id, name: creator.name }
+            creator: { _id: creator._id, name: user.name }
         });
-    })
-    .catch(err => { 
+        return savedUser;
+    }
+    catch(err){
         if(!err.statusCode){
             err.statusCode = 500;
         } 
         next(err);
-    });
+    }
+    // post.save()
+    // .then(result => {
+    //     return User.findById(req.userId);
+    // })
+    // .then(user => {
+    //     creator = user;
+    //     user.posts.push(post);
+    //     return user.save();
+    // })
+    // .then(result => {
+    //     console.log(result);
+    //     io.getIO().emit('posts', { 
+    //         action: 'create', 
+    //         post: { ...post._doc, creator: { _id: req.userId, name: user.name } } 
+    //     });
+    //     res.status(201).json({
+    //         message: 'Post Created Successfully',
+    //         post: post,
+    //         creator: { _id: creator._id, name: creator.name }
+    //     });
+    // })
+    // .catch(err => { 
+    //     if(!err.statusCode){
+    //         err.statusCode = 500;
+    //     } 
+    //     next(err);
+    // });
 };
 
 

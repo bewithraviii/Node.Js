@@ -4,7 +4,7 @@
   "description": "Complete Node.js guide",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "start": "nodemon app.js"
   },
   "license": "ISC",
@@ -19,6 +19,9 @@
     "socket.io": "^4.7.1"
   },
   "devDependencies": {
-    "nodemon": "^1.14.9"
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "nodemon": "^1.14.9",
+    "sinon": "^15.2.0"
   }
 }
