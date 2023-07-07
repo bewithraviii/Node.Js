@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 
 const feedRoutes = require('./routes/feedRoute');
+const authRoutes = require('./routes/authRoute');
 
 const bodyParser = require('body-parser');
 
@@ -36,18 +37,26 @@ app.use((req, res, next) => {
 });
 
 app.use('/feed', feedRoutes);
+app.use('/auth', authRoutes);
+
 
 app.use((error, req, res, next) => {
     console.log(error);
     const status = error.statusCode || 500;
     const message = error.message;
+    const data = error.data;
     res.status(status).json({
-        message: message
+        message: message,
+        data: data
     });
 });
 
 mongoose.connect('mongodb+srv://ravipateljigneshpatel137:Ravi3601@nodeshop.azir75m.mongodb.net/Messages')
 .then(result => {
-    app.listen(8080);
+    const server = app.listen(8080);
+    const io = require('./socket').init(server);
+    io.on('connection', socket => {
+        console.log('Client Connected');
+    });
 })
 .catch(err => console.log(err));
